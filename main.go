@@ -13,7 +13,10 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Println(err)
+	}
 	port := os.Getenv("PORT")
 	// Define CORS options
 	corsOptions := cors.Options{
@@ -27,6 +30,7 @@ func main() {
 	v1 := chi.NewRouter()
 	router.Use(cors.Handler(corsOptions))
 	v1.Get("/hello", func(w http.ResponseWriter, r *http.Request) { respondWithJson(w, 200, "hello") })
+	v1.Get("/error", func(w http.ResponseWriter, r *http.Request) { respondWithError(w, 200, "this is an error test") })
 	router.Mount("/v1", v1)
 	srv := &http.Server{
 		Addr:              ":" + port,
