@@ -1,0 +1,45 @@
+name: ci
+on:
+  pull_request:
+    branches: [main]
+  
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set-Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.5'
+      - name: Checkout Codes
+        uses: actions/checkout@v4
+      - name: Install gosec
+        run:  go install github.com/securego/gosec/v2/cmd/gosec@latest
+      - name: Check secuirity issues
+        run: gosec ./...
+      - name: Run all Tests
+        run: go test ./...
+
+  syle:
+    name: Style
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set-Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.5'
+      - name: Checkout Codes
+        uses: actions/checkout@v4
+      - name: Install StaticCheck
+        run:  go install honnef.co/go/tools/cmd/staticcheck@latest
+      - name: Check for linting issues
+        run: staticcheck ./...
+      - name: Check for Formating issues
+        run: test -z $(go fmt ./...)
+
+
+ 
+   
